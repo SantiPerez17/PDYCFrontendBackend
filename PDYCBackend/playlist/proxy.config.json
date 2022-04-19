@@ -1,0 +1,16 @@
+{
+    "/login":{
+        "target":"http://localhost:8080","secure":false,"changeOrigin":true
+
+    }
+    ,
+    "/playlists/*":{
+        "target":"http://localhost:8080","secure":false,"changeOrigin":true
+
+    }
+    ,
+    "/songs/*":{
+        "target":"http://localhost:8080","secure":false,"changeOrigin":true
+
+    }
+}

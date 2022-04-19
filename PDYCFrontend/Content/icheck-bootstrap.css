@@ -1,0 +1,119 @@
+/*!
+ * icheck-bootstrap v3.0.1 (https://github.com/bantikyan/icheck-bootstrap)
+ * Copyright 2018 Hovhannes Bantikyan.
+ * Licensed under MIT (https://github.com/bantikyan/icheck-bootstrap/blob/master/LICENSE)
+ */
+
+ [class*="icheck-"] {
+    min-height: 22px;
+    /*margin-top: 6px !important;*/
+    /*margin-bottom: 6px !important;*/
+    padding-left: 0px;
+}
+
+.icheck-inline {
+    display: inline-block;
+}
+
+.icheck-flex {
+    display: inline-flex;
+}
+
+    .icheck-inline + .icheck-inline {
+        margin-left: .75rem;
+        margin-top: 6px;
+    }
+
+[class*="icheck-"] > label {
+    padding-left: 29px !important;
+    min-height: 22px;
+    line-height: 22px;
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+[class*="icheck-"] > input {
+    position: absolute !important;
+    opacity: 0;
+    margin: 0;
+}
+
+    [class*="icheck-"] > input:disabled {
+        cursor: default;
+    }
+
+    [class*="icheck-"] > input + label::before,
+    [class*="icheck-"] > input + input[type="hidden"] + label::before {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        border: 1px solid #D3CFC8;
+        border-radius: 0px;
+        margin-left: -25px;
+    }
+
+    [class*="icheck-"] > input:checked + label::after,
+    [class*="icheck-"] > input:checked + input[type="hidden"] + label::after {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        top: 0px;
+        left: 4px;
+        width: 7px;
+        height: 11px;
+        border: solid 2px #fff;
+        border-left: none;
+        border-top: none;
+        transform: translate(7.75px, 4.5px) rotate(45deg);
+        -ms-transform: translate(7.75px, 4.5px) rotate(45deg);
+    }
+
+[class*="icheck-"] > input[type="radio"] + label::before,
+[class*="icheck-"] > input[type="radio"] + input[type="hidden"] + label::before {
+    border-radius: 50%;
+}
+
+[class*="icheck-"] > input:not(:checked):not(:disabled):hover + label::before,
+[class*="icheck-"] > input:not(:checked):not(:disabled):hover + input[type="hidden"] + label::before {
+    border-width: 2px;
+}
+
+[class*="icheck-"] > input:disabled + label,
+[class*="icheck-"] > input:disabled + input[type="hidden"] + label,
+[class*="icheck-"] > input:disabled + label::before,
+[class*="icheck-"] > input:disabled + input[type="hidden"] + label::before {
+    pointer-events: none;
+    cursor: default;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    opacity: .65;
+}
+
+.icheck-default > input:not(:checked):not(:disabled):hover + label::before,
+.icheck-default > input:not(:checked):not(:disabled):hover + input[type="hidden"] + label::before {
+    border-color: #adc22f;
+}
+
+.icheck-default > input:checked + label::before,
+.icheck-default > input:checked + input[type="hidden"] + label::before {
+    background-color: #adc22f;
+    border-color: #adc22f;
+}
+
+.icheck-danger > input:not(:checked):not(:disabled):hover + label::before,
+.icheck-danger > input:not(:checked):not(:disabled):hover + input[type="hidden"] + label::before {
+    border-color: #ab0f0f;
+}
+
+.icheck-danger > input:checked + label::before,
+.icheck-danger > input:checked + input[type="hidden"] + label::before {
+    background-color: #ab0f0f;
+    border-color: #ab0f0f;
+}

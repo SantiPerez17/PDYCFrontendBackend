@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch PlaylistApplication",
+            "request": "launch",
+            "mainClass": "ar.edu.unnoba.pdyc2021.mymusic.PlaylistApplication",
+            "projectName": "playlist"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-PlaylistApplication<playlist>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "ar.com.unnoba.playlist.PlaylistApplication",
+            "projectName": "playlist",
+            "args": ""
+        }
+    ]
+}

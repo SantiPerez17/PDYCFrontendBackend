@@ -1,0 +1,506 @@
+﻿@{
+    ViewBag.Title = "Playlists";
+}
+
+<body>
+
+    <div class="content-wrapper" id="contentWrapperListados" style="margin-left:0px;">
+        <div class="container-fluid">
+            <div class="row form-group">
+                <div class="col col-12 col-sm-12 col-md-8">
+                    &nbsp;
+                    <h2>Playlists</h2>
+                </div>
+            </div>
+
+            <div class="divBusqueda">
+                <br />
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row form-group">
+                            <div class="col col-12 col-sm-12 col-md-3" style="margin-top: 30px">
+                                <label>Nombre:</label>
+                                <input class="form-control" id="name_playlist">
+                                <span></span>
+                            </div>
+                            <div class="col col-12 col-sm-12 col-md-3" style="margin-top: 30px">
+                                <label>Autor:</label>
+                                <input class="form-control" id="author_playlist" disabled="disabled">
+                                <span></span>
+                            </div>
+                            <div class="col col-12 col-sm-12 col-md-2" style="margin-top: 35px">
+                                &nbsp;
+                                <button id="btnBuscar" type="button" class="form-control btn-info"> Buscar </button>
+                            </div>
+                            <div class="col col-12 col-sm-12 col-md-2" style="margin-top: 35px">
+                                &nbsp;
+                                <button id="btnAgregar" class="form-control btn-agregar"> Agregar </button>
+                            </div>
+                            <div class="col col-12 col-sm-12 col-md-2" style="margin-top: 35px">
+                                &nbsp;
+                                <button id="btnLimpiar" type="button" class="form-control btn-outline-info"> Limpiar </button>
+                            </div>
+                            <div class="col col-12 col-sm-12 col-md-10" style="margin-top: 30px">
+                                <label>Songs:</label>
+                                <select class="form-control" id="songs_combo_playlist">
+                                </select>
+                                <span></span>
+                            </div>
+                            <div class="col col-12 col-sm-12 col-md-2" style="margin-top: 35px">
+                                &nbsp;
+                                <button id="btnAgregarSong" class="form-control btn-agregar"> Agregar </button>
+                            </div>
+                            <div class="col col-12 col-sm-12 col-md-12" style="margin-top: 30px">
+                                &nbsp;
+                                <h6><span class="text-danger" id="errorFiltro"></span></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+
+            <div class="divTabla">
+                <div id="divFiltros" class="row form-group">
+                    <div class="col col-12 col-sm-12 col-md-3" id="divInfo">
+                    </div>
+                    <div class="col col-12 col-sm-12 col-md-4" id="divBotones">
+                    </div>
+                </div>
+                <table id="tablaPlaylists" style="width:100%;display:none;" class="table table-striped table-responsive-md display nowrap">
+                </table>
+            </div>
+
+            <div id="modalDetalle" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Songs</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modalDetalle_body">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card text-center" style="display: none;" id="error_card">
+                <div class="card-header">
+                    <br />
+                    <h5 class="card-title">
+                        <span style="color: red;">
+                            <i class="fas fa-exclamation-circle fa-5x"></i>
+                        </span>
+                    </h5>
+                    <br />
+
+                    <h5 class="card-title">Ocurrió un error al cargar el listado. Intente nuevamente más tarde.</h5>
+                    <br />
+
+                    <a href="@Url.Action("Index", "Playlist")" class="btn btn-primary"><i class="fas fa-redo-alt"></i> Recargar</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+
+
+
+@section scripts{
+
+    <script>
+        var Popup, dataTable, e;
+
+        $(document).ready(function () {
+
+            $(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("Login", "Login")",
+                    data: {
+                        usuario: localStorage.getItem("userName"),
+                        password: localStorage.getItem("userPass")
+                    },
+                    datatype: 'json',
+                    success: function (data) {
+                        if (data == "") {
+                            window.location.href = "https://localhost:44345/Login";
+                        } else {
+                            if (localStorage.getItem("accessToken") == "") {
+                                window.location = "https://localhost:44345/Login";
+                            } else {
+                                $('#divOpciones').show()
+                            }
+                        }
+                    },
+                    error: function (data) {
+                        if (data.responseText == "") {
+                            window.location.href = "https://localhost:44345/Login";
+                        } else {
+                            if (localStorage.getItem("accessToken") == "") {
+                                window.location = "https://localhost:44345/Login";
+                            } else {
+                                $('#divOpciones').show()
+                            }
+                        }
+                    }
+                });
+            });
+
+            $('#btnBuscar').click(function () {
+                buscar();
+            });
+
+            $('#btnLimpiar').click(function () {
+                limpiar();
+            });
+
+            $(function () {
+                loadSongs();
+            });
+
+            $(function () {
+                loadAutor();
+            });
+
+            $("#btnBaja").click(function () {
+                var resultado = window.confirm('Está seguro que desea darse de baja?');
+                if (resultado === true) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "@Url.Action("DeleteUser", "Login")",
+                        data: {
+                            email: localStorage.getItem("userName"),
+                            accessToken: localStorage.getItem("accessToken")
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data != "") {
+                                window.alert('Usted se ha dado de baja exitosamente!');
+                                localStorage.setItem("accessToken", "");
+                                localStorage.setItem("userPass", "");
+                                localStorage.setItem("userName", "");
+                                window.location.href = "https://localhost:44345/Login";
+                            } else {
+                                window.alert("Error al darse de baja");
+                            }
+                        },
+                        error: function (data) {
+                            if (data.responseText != "") {
+                                window.alert('Usted se ha dado de baja exitosamente!');
+                                localStorage.setItem("accessToken", "");
+                                localStorage.setItem("userPass", "");
+                                localStorage.setItem("userName", "");
+                                window.location.href = "https://localhost:44345/Login";
+                            } else {
+                                window.alert("Error al darse de baja");
+                            }
+                        }
+                    });
+                } else {
+                }
+            });
+
+            $("#btnAgregar").click(function () {
+                $('#errorFiltro').empty();
+                if (!$('#name_playlist').val().trim() || !$('#author_playlist').val().trim()) {
+                    $('#errorFiltro').text("Complete los campos.");
+                } else {
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("AddPlaylist", "Playlist")",
+                        data: {
+                            nombre: function () { return $('#name_playlist').val() },
+                            autor: function () { return $('#author_playlist').val() },
+                            accessToken: localStorage.getItem("accessToken")
+                        },
+                        dataType: "json"
+                    });
+                    limpiar();
+                    buscar();
+                }
+            });
+
+            $("#btnAgregarSong").click(function () {
+                $('#errorFiltro').empty();
+                if ($('#songs_combo_playlist').val() == "") {
+                    $('#errorFiltro').text("Elija una song.");
+                } else {
+                    let concatIds = "";
+                    let selectedItems = dataTable.rows({ selected: true }).data();
+                    if (selectedItems.count() > 0) {
+                        for (var i = 0; i < selectedItems.count(); i++) {
+                            concatIds += selectedItems[i].id + ",";
+                        }
+                        $.ajax({
+                            type: "POST",
+                            url: "@Url.Action("AddSong", "Playlist")",
+                            data: {
+                                ids: concatIds,
+                                songId: function () { return $('#songs_combo_playlist').val() },
+                                accessToken: localStorage.getItem("accessToken")
+                            },
+                            dataType: "json",
+                            success: function (data) {
+                                if (data != "") {
+                                    console.log(data);
+                                    limpiar();
+                                    buscar();
+                                } else {
+                                    console.log(data);
+                                    $('#errorFiltro').text("La song ya se encuentra en la playlist seleccionada.");
+                                }
+                            },
+                            error: function (data) {
+                                if (data.responseText != "") {
+                                    limpiar();
+                                    buscar();
+                                } else {
+                                    $('#errorFiltro').text("La song ya se encuentra en la playlist seleccionada.");
+                                }
+                            }
+                        });
+                    } else {
+                        $('#errorFiltro').text("Elija una o mas playlists.");
+                    }
+                }
+            });
+
+        });
+
+        function loadTable() {
+            $("#tablaPlaylists_info").remove();
+            $("#tablaPlaylists_filter").remove();
+            $('.divTabla').show();
+
+            dataTable = null;
+            dataTable = $("#tablaPlaylists").DataTable({
+                "ajax": {
+                    "url": "@Url.Action("GetPlaylists", "Playlist")",
+                    "data": {
+                        "nombre": function () { return $('#name_playlist').val() },
+                        "autor": function () { return $('#author_playlist').val() },
+                        "accessToken": localStorage.getItem("accessToken")
+                    },
+                    "type": "GET",
+                    "datatype": "json",
+                    "error": function (jqXHR, textStatus, errorThrown) {
+                        dataTable.destroy();
+                        $('#error_card').show();
+                        $('.divBusqueda').hide();
+                        $('.divTabla').hide();
+                    },
+                    "dataSrc": function (json) {
+                        $('#tablaPlaylists').show();
+                        $('#divFiltros').show();
+                        $('.dataTables_paginate').show();
+                        $('.dataTables_length').show();
+                        return json.data;
+                    }
+                },
+                "select": {
+                    "style": 'multi',
+                    "selector": 'td:first-child'
+                },
+                "buttons": [
+                    'selectAll',
+                    'selectNone'
+                ],
+                "columnDefs": [{
+                    "className": 'control',
+                    "orderable": false,
+                    "targets": -1
+                }],
+                "columns": [
+                    {
+                        "orderable": false,
+                        "className": 'select-checkbox',
+                        "targets": 0,
+                        "data": null,
+                        "defaultContent": '',
+                        "title": "Seleccionar"
+                    },
+                    { "data": "id", "orderable": true, "autoWidth": true, "title": "Número" },
+                    { "data": "name", "orderable": true, "autoWidth": true, "title": "Nombre" },
+                    { "data": "author", "orderable": true, "title": "Autor" },
+                    {
+                        "data": "id", "render": function (data, type, full, meta) {
+                            htmlstring = "<a href='#' onclick='editPlaylist(\"" + full.id + "\")'><i class='fa fa-edit' style='font-size:20px'></i></a>";
+                            htmlstring += "<a href='#' onclick='deletePlaylist(\"" + full.id + "\")'><i class='fa fa-trash' style='font-size:20px'></i></a>";
+                            return htmlstring += "<a href='#' onclick='showSongs(\"" + full.id + "\")'><i class='fa fa-fw fa-eye' style='font-size:20px'></i></a>";
+                        }, "orderable": false, "title": "Acciones"
+                    },
+                    {
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
+                ],
+                "dom": 'Blrtip',
+                "language": {
+                    buttons: {
+                        selectAll: "Seleccionar todas",
+                        selectNone: "Deseleccionar todas"
+                    },
+                    select: {
+                        rows: "<h5><span class='badge badge-success'>%d</span> playlists seleccionadas</h5>",
+                    },
+                    //sProcessing: "Procesando...<div id='loader'></div>",
+                    sProcessing: "Cargando... <br> <small>Esta operación puede demorar</small> <br> <br> <img  src='@Url.Content("~/Images/loading.gif")' >",
+                    sLengthMenu: "Mostrar _MENU_ playlists",
+                    sZeroRecords: "No se encontraron resultados",
+                    sEmptyTable: "Ningún dato disponible en esta tabla",
+                    sInfo: "<h5><span class='badge badge-primary'>_TOTAL_</span> playlists</h5>",
+                    sInfoEmpty: "",
+                    sInfoFiltered: "", //"(filtrado de un total de _MAX_)",
+                    sInfoPostFix: "",
+                    sSearch: "Buscar:",
+                    sUrl: "",
+                    sInfoThousands: ",",
+                    sLoadingRecords: "Cargando...",
+                    oPaginate: {
+                        sFirst: "Primero",
+                        sLast: "Último",
+                        sNext: ">>",
+                        sPrevious: "<<"
+                    },
+                    oAria: {
+                        sSortAscending: ": Activar para ordenar la columna de manera ascendente",
+                        sSortDescending: ": Activar para ordenar la columna de manera descendente"
+                    }
+                },
+                "processing": true, // for show progress bar
+                "responsive": {
+                    "details": {
+                        "type": 'column',
+                        "target": -1
+                    }
+                },
+                "order": [[1, "asc"]],
+                "destroy": true,
+                "paging": true
+            });
+
+            var parentLength = $("#tablaPlaylists_length").parent();
+
+            $("#divInfo").append($("#tablaPlaylists_info"));
+            $("#divBotones").append($('.dt-buttons')[0]);
+            parentLength.append($("#tablaPlaylists_length"));
+
+            $('.dataTables_paginate').hide();
+            $('.dataTables_length').hide();
+
+        }
+
+        function buscar() {
+            $('#errorFiltro').empty();
+            loadTable();
+        }
+
+        function limpiar() {
+            $('#errorFiltro').empty();
+            $('#name_playlist').val("");
+            $('#author_playlist').val(localStorage.getItem("userName"));
+            $('#songs_playlist').val("");
+            $('#songs_combo_playlist').val("");
+        }
+
+        function editPlaylist(idPlaylist) {
+            $('#errorFiltro').empty();
+            if (!$('#name_playlist').val().trim() || !$('#author_playlist').val().trim()) {
+                $('#errorFiltro').text("Complete los campos.");
+            } else {
+                $.ajax({
+                    type: "PUT",
+                    url: "@Url.Action("EditPlaylist", "Playlist")",
+                    data: {
+                        id: idPlaylist,
+                        nombre: function () { return $('#name_playlist').val() },
+                        accessToken: localStorage.getItem("accessToken")
+                    },
+                    dataType: "json"
+                });
+                limpiar();
+                buscar();
+            }
+        }
+
+        function deletePlaylist(idPlaylist) {
+            $('#errorFiltro').empty();
+                $.ajax({
+                type: "DELETE",
+                url: "@Url.Action("DeletePlaylist", "Playlist")",
+                data: {
+                    id: idPlaylist,
+                    accessToken: localStorage.getItem("accessToken")
+                },
+                dataType: "json"
+            });
+            limpiar();
+            buscar();
+        }
+
+        function loadSongs() {
+            $('#errorFiltro').empty();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetSongs", "Playlist")",
+                data: {
+                    accessToken: localStorage.getItem("accessToken")
+                },
+                datatype: "json",
+                success: function (data) {
+                    $('#songs_combo_playlist').empty();
+                    $('#songs_combo_playlist').append($('<option>').val("").text(""));
+                    for (var i = 0; i < data.length; i++) {
+                        $('#songs_combo_playlist').append($('<option>').val(data[i].id).text("Nombre: " + data[i].name + " - Autor: " + data[i].author + " - Género: " + data[i].genre));
+                    }
+                }
+            });
+        }
+
+        function loadAutor() {
+            $('#author_playlist').val(localStorage.getItem("userName"));
+        }
+
+        function showSongs(id) {
+            $("#modalDetalle_body").empty();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetPlaylistSongs", "Playlist")",
+                data: {
+                    id: id,
+                    accessToken: localStorage.getItem("accessToken")
+                },
+                datatype: "json",
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        $("#modalDetalle_body").append('<div class="card"><div class="card-body"><h6>' + "Número: " + data[i].id + " - Nombre: " + data[i].name + " - Autor: " + data[i].author + " - Género: " + data[i].genre + "<a href='#' onclick='deleteSong(\"" + id + "\",\"" + data[i].id + "\")'><i class='fa fa-trash' style='font-size: 20px; float: right;'></i></a>" + '</h6></div></div><br>');
+                    }
+                }
+            });
+            $('#modalDetalle').modal('toggle');
+        }
+
+        function deleteSong(playlistId, songId) {
+            $('#errorFiltro').empty();
+                $.ajax({
+                type: "DELETE",
+                url: "@Url.Action("DeleteSong", "Playlist")",
+                    data: {
+                        playlistId: playlistId,
+                        songId: songId,
+                        accessToken: localStorage.getItem("accessToken")
+                },
+                dataType: "json"
+            });
+            showSongs(playlistId);
+        }
+
+    </script>
+
+}

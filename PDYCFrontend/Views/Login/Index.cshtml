@@ -1,0 +1,103 @@
+﻿@{
+    ViewBag.Title = "Login";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <title>Login</title>
+
+</head>
+
+<body>
+
+    <form [formGroup]="loginForm">
+        <h2>Login</h2>
+        <div class="form-group">
+            <label for="usuario">Email</label>
+            <input type="text" name="usuario" class="form-control" id="usuario" />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" class="form-control" id="password" />
+        </div>
+
+        <div class="col col-12 col-sm-12 col-md-12" style="margin-top: 30px">
+            &nbsp;
+            <h6><span class="text-danger" id="errorFiltro"></span></h6>
+        </div>
+
+        <div class="form-group">
+            <input type="button" class="btn btn-primary" name="btnVerifivaca" id="btnVerifica" onclick="validar()" value="Login" />
+        </div>
+
+        <div class="mt-2" style="text-align:center; color:#00A8E0">
+            @Html.ActionLink("Registrarse  ", "Index", "Registro", null, null) |
+            @Html.ActionLink(" Cambiar clave", "Index", "CambiarClave", null, null)
+        </div>
+
+    </form>
+</body>
+</html>
+
+@section scripts{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(function () {
+                localStorage.setItem("accessToken", "");
+                localStorage.setItem("userPass", "");
+                localStorage.setItem("userName", "");
+            });
+
+            $(function () {
+                if (localStorage.getItem("accessToken") == "") {
+                    $('#divOpciones').hide()
+                } else {
+                    $('#divOpciones').show()
+                }
+            });
+        })
+
+        
+
+        function validar() {
+            $('#errorFiltro').empty();
+            var usuario = document.getElementById("usuario").value;
+            var password = document.getElementById("password").value;
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Login", "Login")",
+                data: {
+                    usuario: usuario,
+                    password: password
+                },
+                datatype: 'json',
+                success: function (data) {
+                    if (data == "") {
+                        $('#errorFiltro').text("Usuario o contraseña incorrecta.");
+                    } else {
+                        localStorage.setItem("accessToken", data);
+                        localStorage.setItem("userName", usuario);
+                        localStorage.setItem("userPass", password);
+                        window.location.href = "https://localhost:44345/Home";
+                    }                   
+                }
+            });
+
+        }
+
+    </script>
+
+}
+
+
+
+
+
+
+

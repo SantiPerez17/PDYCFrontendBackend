@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        li {
+            float: left;
+        }
+
+            li a {
+                display: block;
+                color: white;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+            }
+    </style>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    @*<script src="~/Scripts/ingreso/alertify.min.js"></script>*@
+    <link href="~/Content/ingreso/alertifyjs/alertify.css" rel="stylesheet" />
+    <link href="~/Content/ingreso/alertifyjs/alertify.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/themes/default.min.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/themes/semantic.min.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/themes/bootstrap.min.css" />
+    <link href="~/Content/fontawesome.css" rel="stylesheet" />
+    <script src="~/Scripts/ingreso/moment-with-locales.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+
+    @*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>*@
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/datatables")
+    @Scripts.Render("~/bundles/select2")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/js-footer")
+
+    @section Styles{
+
+        @Styles.Render("~/Content/select2")
+
+    }
+    @RenderSection("Styles", required: false)
+    @RenderSection("Scripts", required: false)
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My Music</title>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-fixed-top" style="color: #40CFFF">
+        <div id="divOpciones">
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        @Html.ActionLink("Inicio", "Index", "Home", null, new { @style = "color: #FFFFFF; font-size: 20px;" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Playlists", "Index", "Playlist", null, new { @style = "color: #FFFFFF; font-size: 20px;" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Songs", "Index", "Song", null, new { @style = "color: #FFFFFF; font-size: 20px;" })
+                    </li>
+                    <li class="nav-item" style="margin-inline-start: 1400px">
+                        <button id="btnBaja" type="button" class="form-control btn-delete"> Dar de baja </button>
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Salir", "Logout", "Login", null, new { @style = "color:#000aaa; font-size: 20px; " })
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My Music</p>
+        </footer>
+    </div>
+
+    @{
+        if (TempData["danger"] != null)
+        {
+            <script>
+                $(".mensajes").css("display", "block");
+            </script>
+        }
+        if (TempData["success"] != null)
+        {
+            <script>
+                $(".mensajes-success").css("display", "block");
+            </script>
+        }
+        if (TempData["mensaje_info"] != null)
+        {
+            <script>
+                $(".mensajes-info").css("display", "block");
+            </script>
+        }
+        else
+        {
+            <script>
+                $(".mensajes-info").css("display", "none");
+            </script>
+        }
+    }
+
+</body>
+</html>

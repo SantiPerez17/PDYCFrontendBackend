@@ -1,0 +1,126 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<body>
+
+</body>
+
+    <div class="row form-group">
+        <div class="col col-12 col-sm-12 col-md-8">
+            &nbsp;
+            <h2>Final - Programación Distribuida y Concurrente</h2>
+        </div>
+    </div>
+    
+
+    @*<div class="jumbotron">
+        <h1>ASP.NET</h1>
+        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+        <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Getting started</h2>
+            <p>
+                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
+                enables a clean separation of concerns and gives you full control over markup
+                for enjoyable, agile development.
+            </p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Get more libraries</h2>
+            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Web Hosting</h2>
+            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        </div>
+    </div>*@
+
+@section scripts{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("Login", "Login")",
+                    data: {
+                        usuario: localStorage.getItem("userName"),
+                        password: localStorage.getItem("userPass")
+                    },
+                    datatype: 'json',
+                    success: function (data) {
+                        if (data == "") {
+                            window.location.href = "https://localhost:44345/Login";
+                        } else {
+                            if (localStorage.getItem("accessToken") == "") {
+                                window.location = "https://localhost:44345/Login";
+                            } else {
+                                $('#divOpciones').show()
+                            }
+                        }
+                    },
+                    error: function (data) {
+                        if (data.responseText == "") {
+                            window.location.href = "https://localhost:44345/Login";
+                        } else {
+                            if (localStorage.getItem("accessToken") == "") {
+                                window.location = "https://localhost:44345/Login";
+                            } else {
+                                $('#divOpciones').show()
+                            }
+                        }
+                    }
+                });                
+            });
+
+            $("#btnBaja").click(function () {
+                var resultado = window.confirm('Está seguro que desea darse de baja?');
+                if (resultado === true) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "@Url.Action("DeleteUser", "Login")",
+                        data: {
+                            email: localStorage.getItem("userName"),
+                            accessToken: localStorage.getItem("accessToken")
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data != "") {
+                                window.alert('Usted se ha dado de baja exitosamente!');
+                                localStorage.setItem("accessToken", "");
+                                localStorage.setItem("userPass", "");
+                                localStorage.setItem("userName", "");
+                                window.location.href = "https://localhost:44345/Login";
+                            } else {
+                                window.alert("Error al darse de baja");
+                            }
+                        },
+                        error: function (data) {
+                            if (data.responseText != "") {
+                                window.alert('Usted se ha dado de baja exitosamente!');
+                                localStorage.setItem("accessToken", "");
+                                localStorage.setItem("userPass", "");
+                                localStorage.setItem("userName", "");
+                                window.location.href = "https://localhost:44345/Login";
+                            } else {
+                                window.alert("Error al darse de baja");
+                            }
+                        }
+                    });
+                } else {
+                }
+            });
+
+        })
+
+    </script>
+
+}
