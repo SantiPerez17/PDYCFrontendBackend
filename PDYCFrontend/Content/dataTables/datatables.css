@@ -799,11 +799,10 @@ div.dtsp-searchPane {
   align-items: stretch;
   padding-top: 0px;
   padding-bottom: 5px;
-  margin: 5px 0;
+  margin: 5px;
   margin-top: 0px;
   margin-bottom: 0px;
   font-size: 0.9em;
-  margin: 5px;
 }
 div.dtsp-searchPane div.dataTables_wrapper {
   flex: 1;
