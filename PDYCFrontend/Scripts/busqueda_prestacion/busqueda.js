@@ -287,7 +287,6 @@ function cargarTablaArchivos(id) {
         "autoWidth": false,
         stateSave: true,
         responsive: true,
-        responsive: true,
         destroy: true,
         "info": false,
         "bLengthChange": false,
