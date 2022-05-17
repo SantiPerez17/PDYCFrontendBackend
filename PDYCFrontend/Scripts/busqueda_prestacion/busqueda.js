@@ -399,7 +399,7 @@ function cargar_select_patologias(id, indice_rp,seleccion_patologia) {
             }            
             $(selector_id).unbind('change').bind('change', function (e) {
                 $(seleccionar_producto).empty();
-                optionSeleccionado = $(this).val();
+                let optionSeleccionado = $(this).val();
                 document.getElementById(seleccion).setAttribute("value", optionSeleccionado);
                 $(seleccionar_producto).append("<option value=''>SELECCIONAR</option>")
                 cargar_select_drogas(id,indice_rp,optionSeleccionado);
