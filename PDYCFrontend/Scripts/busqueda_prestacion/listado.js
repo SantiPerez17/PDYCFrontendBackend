@@ -12,7 +12,7 @@ function documentReady() {
         //$('.none').css("display", "none");
         $('#tramites').addClass("none");
         $('.dataTables_processing').css("display", "block");
-        filtro = 7;
+        let filtro = 7;
         getData();
     });
 
